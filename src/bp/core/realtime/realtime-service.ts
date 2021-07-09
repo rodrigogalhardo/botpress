@@ -91,7 +91,7 @@ export class RealtimeService {
     // rooms here contains one being socketId and all rooms in which user is connected
     // in the "guest" case it's a single room being the webchat and corresponds to the visitor id
     // resulting wo something like ["/guest:lijasdioajwero", "visitor:kas9d2109das0"]
-    const roomId = rooms.filter(x => x !== socketId)[0]
+    const roomId = rooms.filter(x => x !== socketId)[0] || socketId
     return roomId ? this.unmakeVisitorId(roomId) : undefined
   }
 
