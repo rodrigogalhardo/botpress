@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "Botpress.fullname" . }}-test-connection"
+  labels:
+    {{- include "Botpress.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "Botpress.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
