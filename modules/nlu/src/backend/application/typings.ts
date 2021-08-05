@@ -9,6 +9,7 @@ export interface BotConfig {
   defaultLanguage: string
   languages: string[]
   nluSeed?: number
+  cloud?: CloudConfig
 }
 
 export interface BotDefinition {
@@ -16,6 +17,12 @@ export interface BotDefinition {
   defaultLanguage: string
   languages: string[]
   seed: number
+}
+
+export interface CloudConfig {
+  oauthUrl: string
+  clientId: string
+  clientSecret: string
 }
 
 export type ProgressCallback = (p: number) => Promise<void>

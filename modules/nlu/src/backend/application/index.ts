@@ -15,7 +15,7 @@ export class NLUApplication {
 
   constructor(
     private _trainingQueue: ITrainingQueue,
-    private _engine: IStanEngine,
+    private _engine: IStanEngine, // _engine should only be used for health checks
     private _servicesFactory: IScopedServicesFactory,
     private _botService: IBotService,
     queueTrainingOnBotMount: boolean = true
@@ -36,7 +36,7 @@ export class NLUApplication {
 
   public async getHealth() {
     try {
-      const { health } = await this._engine.getInfo()
+      const { health } = await this._engine.getInfo() // _engine should only be used for health checks
       return health
     } catch (err) {
       return
@@ -90,7 +90,7 @@ export class NLUApplication {
     return async (lang: string) => {
       const trainSet = await defService.getTrainSet(lang)
       const trainInput = mapTrainSet(trainSet)
-      const { exists, modelId } = await this._engine.hasModelFor(bot.id, trainInput)
+      const { exists, modelId } = await bot.hasModelFor(trainInput)
       const trainId = { botId, language: lang }
       if (exists) {
         await this.trainRepository.inTransaction(trx => trx.delete(trainId))
