@@ -17,6 +17,7 @@ import path from 'path'
 import replace from 'replace-in-file'
 import tmp, { file } from 'tmp'
 import { VError } from 'verror'
+import yn from 'yn'
 
 import { FileRevision, PendingRevisions, ReplaceContent, ServerWidePendingRevisions, StorageDriver } from '.'
 import { DBStorageDriver } from './db-driver'
@@ -734,8 +735,11 @@ export class ScopedGhostService {
   }
 
   onFileChanged(callback: (filePath: string) => void): ListenHandle {
-    const cb = file => callback && callback(file)
-    this.events.on('changed', cb)
-    return { remove: () => this.events.off('changed', cb) }
+    if (!yn(process.env.CORE_DISABLE_FILE_LISTENERS)) {
+      const cb = file => callback && callback(file)
+      this.events.on('changed', cb)
+      return { remove: () => this.events.off('changed', cb) }
+    }
+    return { remove: () => {} }
   }
 }

@@ -19,6 +19,7 @@ import LRUCache from 'lru-cache'
 import moment from 'moment'
 import ms from 'ms'
 import nanoid from 'nanoid/generate'
+import yn from 'yn'
 
 import { validateFlowSchema } from '../validator'
 
@@ -86,20 +87,22 @@ export class FlowService {
   }
 
   private _listenForCacheInvalidation() {
-    this.cache.events.on('invalidation', async key => {
-      try {
-        const matches = key.match(/^([A-Z0-9-_]+)::data\/bots\/([A-Z0-9-_]+)\/flows\/([\s\S]+(flow|ui)\.json)/i)
+    if (!yn(process.env.CORE_DISABLE_FILE_LISTENERS)) {
+      this.cache.events.on('invalidation', async key => {
+        try {
+          const matches = key.match(/^([A-Z0-9-_]+)::data\/bots\/([A-Z0-9-_]+)\/flows\/([\s\S]+(flow|ui)\.json)/i)
 
-        if (matches && matches.length >= 2) {
-          const [key, type, botId, flowName] = matches
-          if (type === 'file' || type === 'object') {
-            await this.forBot(botId).handleInvalidatedCache(flowName, type === 'file')
+          if (matches && matches.length >= 2) {
+            const [key, type, botId, flowName] = matches
+            if (type === 'file' || type === 'object') {
+              await this.forBot(botId).handleInvalidatedCache(flowName, type === 'file')
+            }
           }
+        } catch (err) {
+          this.logger.error('Error Invalidating flow cache: ' + err.message)
         }
-      } catch (err) {
-        this.logger.error('Error Invalidating flow cache: ' + err.message)
-      }
-    })
+      })
+    }
   }
 
   public forBot(botId: string): ScopedFlowService {
