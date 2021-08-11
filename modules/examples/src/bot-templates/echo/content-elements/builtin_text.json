@@ -1,0 +1,13 @@
+[
+  {
+    "id": "builtin_text-4f1UXj",
+    "formData": {
+      "markdown$en": true,
+      "typing$en": true,
+      "text$en": "## Chatops example\n\nI'm responding to simple command. You can type the following command \n\n### `!echo <message>`\n\nor\n\n### `!ping`\n\nFor more information about botpress you can [here](https://botpress.com/docs/introduction)"
+    },
+    "createdBy": "admin",
+    "createdOn": "2021-08-11T17:06:17.143Z",
+    "modifiedOn": "2021-08-11T17:47:46.647Z"
+  }
+]

@@ -1,0 +1,75 @@
+{
+  "version": "0.0.1",
+  "catchAll": {
+    "onReceive": [],
+    "next": []
+  },
+  "startNode": "entry",
+  "nodes": [
+    {
+      "id": "entry",
+      "name": "entry",
+      "next": [
+        {
+          "condition": "event.payload.text.startsWith('!echo')",
+          "node": "echo"
+        },
+        {
+          "condition": "event.payload.text.startsWith('!ping')",
+          "node": "ping"
+        },
+        {
+          "condition": "true",
+          "node": "help-menu"
+        }
+      ],
+      "onEnter": [],
+      "onReceive": null
+    },
+    {
+      "id": "957400d484",
+      "name": "echo",
+      "next": [
+        {
+          "condition": "true",
+          "node": ""
+        }
+      ],
+      "onEnter": [
+        "echo {}"
+      ],
+      "onReceive": null,
+      "type": "standard"
+    },
+    {
+      "id": "a5f93797a6",
+      "name": "ping",
+      "next": [
+        {
+          "condition": "true",
+          "node": ""
+        }
+      ],
+      "onEnter": [
+        "ping {}"
+      ],
+      "onReceive": null,
+      "type": "standard"
+    },
+    {
+      "id": "2953f3ec96",
+      "name": "help-menu",
+      "next": [
+        {
+          "condition": "true",
+          "node": ""
+        }
+      ],
+      "onEnter": [
+        "say #!builtin_text-4f1UXj"
+      ],
+      "onReceive": null,
+      "type": "standard"
+    }
+  ]
+}
