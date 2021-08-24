@@ -147,6 +147,7 @@ export class StanEngine {
   }
 
   public async predict(appId: string, utterance: string, modelId: string): Promise<PredictOutput> {
+    console.log(`Predicting with appId: ${appId}, utterance: ${utterance}, modelId: ${modelId}`)
     const response = await this._client.predict(modelId, {
       utterances: [utterance],
       appSecret: this._appSecret,
