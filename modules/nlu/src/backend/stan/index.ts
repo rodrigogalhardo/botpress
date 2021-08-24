@@ -38,10 +38,12 @@ export class StanEngine {
   }
 
   private async _hasModel(appId: string, modelId: string): Promise<boolean> {
+    console.log(`Fetching models for appId: ${appId} with modelId ${modelId}`)
     const response = await this._client.listModels({ appSecret: this._appSecret, appId })
     if (!response.success) {
       return this._throwError(response.error)
     }
+    console.log(`Got models for appId: ${appId} with modelId ${modelId}: ${JSON.stringify(response.models)}`)
     return response.models.includes(modelId)
   }
 
