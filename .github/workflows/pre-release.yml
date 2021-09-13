@@ -17,11 +17,10 @@ jobs:
         with:
           node-version: '12.13.0'
 
-      - name: Install SSH Key
-        uses: shimataro/ssh-key-action@v2
+      - name: Configure SSH Key
+        uses: botpress/gh-actions/set_ssh_key@master
         with:
-          key: ${{ secrets.BP_PRO_SSH }}
-          known_hosts: ${{ ssh-keyscan -H "github.com" }}
+          ssh_key: ${{ secrets.BP_PRO_SSH }}
 
       - uses: actions/cache@v2
         id: cache
