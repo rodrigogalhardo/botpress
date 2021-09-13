@@ -35,6 +35,7 @@ jobs:
         env:
           GULP_PARALLEL: ${{ steps.cache.outputs.cache-hit }}
           EDITION: pro
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create Archives
         run: yarn cmd archive
