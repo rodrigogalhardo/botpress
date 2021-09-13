@@ -1,4 +1,4 @@
-name: Pre-Release
+name: Test relse
 on:
   push:
     branches:
@@ -18,17 +18,20 @@ jobs:
           node-version: '12.13.0'
 
       - uses: actions/cache@v2
+        id: cache
         with:
           path: '**/node_modules'
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Fetch Node Packages
-        run: yarn
+        run: |
+          yarn
+          echo  ${{ steps.cache.outputs.cache-hit }}
 
       - name: Build Project
         run: yarn build --prod
         env:
-          GULP_PARALLEL: true
+          GULP_PARALLEL: ${{ steps.cache.outputs.cache-hit }}
 
       - name: Create Archives
         run: yarn cmd archive
