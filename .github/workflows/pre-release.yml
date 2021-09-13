@@ -1,5 +1,9 @@
 name: Pre-Release
-on: [pull_request]
+on:
+  push:
+    branches:
+      - '**'
+      - '!master'
 
 jobs:
   pre_release_bin:
