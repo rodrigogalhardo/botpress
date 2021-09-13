@@ -1,0 +1,34 @@
+name: Pre-Release
+on: [pull_request]
+
+jobs:
+  pre_release_bin:
+    name: Build and Publish Binaries
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Fetch Node Packages
+        run: yarn
+
+      - name: Extract Branch Name
+        id: extract_branch
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+
+      - name: Build Project
+        run: |
+          yarn build --prod
+          yarn cmd archive
+
+      - name: Create Pre-Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./paclages/bp/archives/botpress*
+          prerelease: true
+          name: ${{ steps.extract_branch.outputs.branch }}
+          tag_name: dev-${{ steps.extract_branch.outputs.branch }}
+          target_commitish: ${{ steps.extract_branch.outputs.branch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
