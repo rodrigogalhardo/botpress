@@ -9,7 +9,7 @@ import path from 'path'
 import rimraf from 'rimraf'
 import yn from 'yn'
 import { downloadFile } from './download'
-import { getReleasedFiles, logger, APP_PREFIX, ProcessedRelease } from './utils'
+import { getReleasedFiles, logger, APP_PREFIX, ProcessedRelease, sanitizeBranch, getBinaries } from './utils'
 
 export const toolsList = {
   nlu: {
@@ -39,8 +39,8 @@ export const initProject = async (packageLocation: string, common: CommonArgs) =
       continue
     }
 
-    const releases = await getReleasedFiles(toolName, common.platform)
-    const devRelease = devBranch && releases.find(x => x.version.endsWith(devBranch))
+    const releases = await getBinaries(toolName, common.platform, devBranch)
+    const devRelease = devBranch && releases.find(x => x.version.endsWith(sanitizeBranch(devBranch)))
 
     if (devBranch && devRelease && !yn(process.env.IGNORE_DEV_BRANCH)) {
       logger.info(`Using the binary of branch "${devBranch}"`)
@@ -143,7 +143,7 @@ export const installFile = async (toolName: string, common: CommonArgs, toolVers
     return logger.error('Invalid tool name')
   }
 
-  const releases = await getReleasedFiles(toolName, common.platform)
+  const releases = await getBinaries(toolName, common.platform, toolVersion)
   const release = !toolVersion ? releases[0] : releases.find(x => x.version.endsWith(toolVersion))
 
   if (!release) {

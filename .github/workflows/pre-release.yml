@@ -1,4 +1,4 @@
-name: Test relse
+name: Pre-Release
 on:
   push:
     branches:
@@ -22,13 +22,15 @@ jobs:
         with:
           ssh_key: ${{ secrets.BP_PRO_SSH }}
 
-      - uses: actions/cache@v2
-        id: cache
+      - name: Install python3
+        uses: actions/setup-python@v1
         with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-modules-
+          python-version: '3.x'
+          architecture: 'x64'
+
+      - name: Install Tools
+        run: |
+          pip install awscli
 
       - name: Fetch Node Packages
         run: |
@@ -38,7 +40,6 @@ jobs:
       - name: Build Project
         run: yarn build --prod
         env:
-          GULP_PARALLEL: ${{ steps.cache.outputs.cache-hit }}
           EDITION: pro
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -50,18 +51,13 @@ jobs:
         with:
           path: ./packages/bp/archives
 
-      - name: Extract Branch Name
-        id: extract_branch
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      - name: Extract Informations
+        id: info
+        uses: botpress/gh-actions/extract_info@master
 
-      - name: Create Pre-Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./packages/bp/archives/botpress*
-          prerelease: true
-          name: ${{ steps.extract_branch.outputs.branch }}
-          tag_name: dev-${{ steps.extract_branch.outputs.branch }}
-          target_commitish: ${{ steps.extract_branch.outputs.branch }}
+      - name: Publish Binaries
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 sync bin s3://botpress-dev-bins/botpress/${{ steps.info.outputs.branch_sanitized }}
