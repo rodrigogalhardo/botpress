@@ -41,7 +41,7 @@ export const getDevBins = async (toolName: string, branch: string): Promise<Proc
     const result = await Promise.fromCallback<any>(cb => parser.parseString(data, cb))
     const files = result.ListBucketResult.Contents
 
-    return files?.map(file => {
+    return (files || [])?.map(file => {
       const fileName = file.Key[0].replace(prefix, '')
       const [_type, branch, _platform] = fileName.split('-')
 
